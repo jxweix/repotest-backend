@@ -6,6 +6,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI()
 
@@ -16,18 +19,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# url:str = os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")
-# key:str = os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
-SUPABASE_ENDPOINT = "https://iqdyhkjgaaimariweutv.supabase.co"
-SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxZHloa2pnYWFpbWFyaXdldXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDE2MTAyMzcsImV4cCI6MjAxNzE4NjIzN30.X5HdI7Qew8UH9AzMeEJLTQPSIIX5ntDuGk1-6rMlBpw"
 
-TABLE_NAME = 'userConjoin_front'
+url:str = os.getenv("SUPABASE_ENDPOINT")
+key:str = os.getenv("SUPABASE_API_KEY")
+tbl:str = os.getenv("SUPABASE_TBL")
 
 def fetch_data():
     with httpx.Client() as client:  # Use httpx.Client instead of httpx.AsyncClient
         response = client.get(
-            f'{SUPABASE_ENDPOINT}/rest/v1/{TABLE_NAME}',
-            headers={'apikey': SUPABASE_API_KEY},
+            f'{url}/rest/v1/{tbl}',
+            headers={'apikey': key},
             params={'select': 'conJoin,No'}  # Adjust the query parameters as needed
         )
         response.raise_for_status()  # Raise an error for unsuccessful HTTP responses
@@ -150,6 +151,12 @@ def recommend(user_id, user_item_matrix, cosine_sim):
     return recommendations_list
 
 
+
+@app.get("/")
+async def root():
+
+
+    return {"AI": url}
 
 @app.get("/user_id/{user_id}")
 async def read_user_data(user_id: int):
