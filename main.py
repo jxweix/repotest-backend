@@ -154,9 +154,7 @@ def recommend(user_id, user_item_matrix, cosine_sim):
 
 @app.get("/")
 async def root():
-
-
-    return {"AI": url}
+    return {"AI": "Hello Humans"}
 
 @app.get("/user_id/{user_id}")
 async def read_user_data(user_id: int):
